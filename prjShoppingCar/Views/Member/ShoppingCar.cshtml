@@ -1,0 +1,199 @@
+﻿@model IEnumerable<prjShoppingCar.Models.tOrderDetail>
+
+@{
+    ViewBag.Title = "會員購物車清單";
+    Layout = "~/Views/Shared/_LayoutMember.cshtml";
+}
+
+<h2>會員購物車清單</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            訂單編號
+        </th>
+        <th>
+            會員編號
+        </th>
+        <th>
+            產品編號
+        </th>
+        <th>
+            產品名稱
+        </th>
+        <th>
+            價格
+        </th>
+        <th>
+            數量
+        </th>
+        <th>
+            已送出
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.fOrderGuid)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.fUserId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.fPId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.fName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.fPrice)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.fQty)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.fIsApproved)
+        </td>
+        <td>
+            <a href="@Url.Action("DeleteCar")?fId=@item.fId"
+               class="btn btn-danger"
+               onclick="return confirm('確定放棄購買 @item.fName 嗎？' )">刪除購物車</a>
+        </td>
+    </tr>
+}
+
+</table>
+
+<form action="@Url.Action("ShoppingCar")" method="post">
+    <div class="form-horizontal">
+        <h4>填寫訂單收件人資料</h4>
+        <hr />
+
+        <div class="form-group">
+            <span class="control-label col-md-2">收件人姓名</span>
+            <div class="col-md-10">
+                <input type="text" id="fReceiver" name="fReceiver" required="required" class="form-control" value="@ViewBag.receiver" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="control-label col-md-2">收件人信箱</span>
+            <div class="col-md-10">
+                <input type="email" id="fEmail" name="fEmail" required="required" class="form-control" value="@ViewBag.email" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="control-label col-md-2">收件人地址</span>
+            <div class="col-md-10">
+                <input type="text" id="fAddress" name="fAddress" required="required" class="form-control" value="@ViewBag.address" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="control-label col-md-2">寄送方式</span>
+            <div class="col-md-10" style="display: flex; flex-direction:row;">
+                <select id="fShipping" name="fShipping" required="required" class="form-control" style="width:15%" value="@ViewBag.shipping" >
+                    <option value="" hidden>選擇寄送方式</option>
+                    <option value="direct"  @if(ViewBag.shipping == "direct"){<text>selected</text>} >宅配</option>
+                    <option value="inStore_711" @if(ViewBag.shipping == "inStore_711") {<text>selected</text>}>7-11超商取件</option>
+                </select>
+                <input type="text" id="fPickAddress" name="fPickAddress" required="required" class="form-control" style="flex:1; width: 30%;" 
+                        placeholder="宅配請填收件地址;超商取件請選取門市"
+                       value="@ViewBag.storename"
+                       @if (ViewBag.shipping == "inStore_711") { <text>readonly</text> }
+                />
+                <button id="btn_select_711" class="btn btn-primary"
+                        style="display:none; margin-left: 12px;">
+                    選取門市
+                </button>
+            </div>
+            
+        </div>
+
+        <div class="form-group">
+            <span class="control-label col-md-2">付款方式</span>
+            <div class="col-md-10">
+                <select id="fPayment" name="fPayment" required="required" class="form-control" style="width:15%" value="@ViewBag.payment">
+                    <option value="" hidden>選擇付款方式</option>
+                    <option value="COD" @if(ViewBag.payment == "COD"){<text>selected</text>}>貨到付款</option>
+                    <option value="transfer" @if(ViewBag.payment == "transfer"){<text>selected</text>}>轉帳</option>
+                    <option value="creditCard" @if(ViewBag.payment == "creditCard"){<text>selected</text>}>信用卡</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="確認訂購" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div id="iframe_container" style="border:1px solid red; display: none; flex-direction:column; width: 80%; height: 90%; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div style="display: flex; justify-content:end; width: 100%; background-color:gray; width:100%;">
+        <button id="btn_iframe_close">X</button>
+    </div>
+    <iframe id="iframe_711" style="border: 1px solid black; width: 100%; flex:1;"></iframe>
+</div>
+<script>
+    var fReceiver = document.getElementById("fReceiver");
+    var fEmail = document.getElementById("fEmail");
+    var fAddress = document.getElementById("fAddress");
+    var fPickAddress = document.getElementById("fPickAddress");
+    var fShipping = document.getElementById("fShipping");
+    var fPayment = document.getElementById("fPayment");
+    var btn_select_711 = document.getElementById("btn_select_711");
+
+    if (fShipping.value == "inStore_711") btn_select_711.style.display = "block";
+
+    fShipping.onchange = (e) => {
+        fPickAddress.value = "";
+        if (e.target.value == 'inStore_711') {
+            fPickAddress.readOnly = true;
+            btn_select_711.style.display = 'block';
+        }
+        else {
+            fPickAddress.readOnly = false;
+            btn_select_711.style.display = 'none';
+        }
+    }
+    btn_select_711.onclick = (e) => {
+        e.preventDefault();
+        let querystring = `receiver=${fReceiver.value}|email=${fEmail.value}|address=${fAddress.value}|shipping=${fShipping.value}|payment=${fPayment.value}`;
+        let href = "https://emap.presco.com.tw/c2cemap.ashx?eshopid=870&&servicetype=1&url=http://localhost:51714/Member/ShoppingCar_?" + querystring
+        window.location.href = href
+    }
+    btn_iframe_close.onclick = (e) => {
+        e.preventDefault();
+        iframe_container.style.display = "none";
+    }
+
+
+    var observer = new MutationObserver(function (mutationsList) {
+        for (var mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'done') {
+                // 获取done属性的新值
+                var doneValue = iframe.getAttribute('done');
+
+                if (doneValue === 'true') {
+                    // done属性值为true时执行的操作
+                    console.log('done属性为true，执行相应操作');
+
+                    // 在这里执行您想要的操作
+                    let contaxt = document.getElementById('contaxt');
+                    console.log('123')
+
+                    // 停止监听
+                    observer.disconnect();
+                }
+            }
+        }
+    });
+
+    // 配置MutationObserver监听的属性和选项
+    observer.observe(iframe, { attributes: true });
+</script>

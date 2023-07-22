@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - 銘傳大學資訊管理公司</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("PC PLAZA", "Index", "Member", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">                
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a class="navbar-link dropdown-toggle" href="#" id="productTypeList" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">產品列表▼</a>
+                        <div class="dropdown-menu" aria-labelledby="productTypeList">
+                            <a class="dropdown-item" name="Laptop" href='@Url.Action("Index", "Member", new { type = "Laptop" }, null)'>筆電</a>
+                            <a class="dropdown-item" name="PC" href='@Url.Action("Index", "Member", new { type = "PC" }, null)'>主機</a>
+                            <a class="dropdown-item" name="Display Card" href='@Url.Action("Index", "Member", new { type = "Display Card" }, null)'>顯示卡</a>
+                            <a class="dropdown-item" name="Monitor" href='@Url.Action("Index", "Member", new { type = "Monitor" }, null)'>螢幕</a>
+                            <a class="dropdown-item" name="RAM" href='@Url.Action("Index", "Member", new { type = "RAM" }, null)'>記憶體</a>
+                            <a class="dropdown-item" name="Headphones" href='@Url.Action("Index", "Member", new { type = "Headphones" }, null)'>耳機</a>
+                            <a class="dropdown-item" name="SSD" href='@Url.Action("Index", "Member", new { type = "SSD" }, null)'>固態硬碟</a>
+                            <a class="dropdown-item" name="Chassis" href='@Url.Action("Index", "Member", new { type = "Chassis" }, null)'>機殼</a>
+                            <a class="dropdown-item" name="Others" href='@Url.Action("Index", "Member", new { type = "Others" }, null)'>其他</a>
+                        </div>
+                        
+                    </li>
+                    <li>@Html.ActionLink("購物車", "ShoppingCar", "Member")</li>
+                    <li>@Html.ActionLink("訂單", "OrderList", "Member")</li>
+                    <li>@Html.ActionLink("登出", "Logout", "Member")</li>
+
+
+
+                    <li><a href="#">@Session["WelCome"]</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - 銘傳大學資訊管理公司</p>
+        </footer>
+    </div>
+
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/Bootstrap4/bootstrap.min.js"></script>
+</body>
+</html>

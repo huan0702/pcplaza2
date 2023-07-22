@@ -1,0 +1,49 @@
+﻿@model string
+
+@functions{
+    public string getShippingString()
+    {
+        switch (ViewBag.shipping)
+        {
+            case "direct":
+                return "宅配";
+            case "inStore_711":
+                return "7-11超商取件";
+            default:
+                return "無";
+        }
+    }
+
+    public string getPaymentString()
+    {
+        switch (ViewBag.payment)
+        {
+            case "COD":
+                return "貨到付款";
+            case "transfer":
+                return "轉帳";
+            case "creditCard":
+                return "信用卡";
+            default:
+                return "無";
+        }
+    }
+
+    public string getPickAddressString()
+    {
+        switch (ViewBag.shipping)
+        {
+            case "direct":
+                return ViewBag.pickAddress;
+            case "inStore_711":
+                return ViewBag.pickAddress + "門市";
+            default:
+                return ViewBag.pickAddress;
+        }
+    }
+}
+
+
+<div>
+    @Html.Raw(ViewBag.externalContent)
+</div>

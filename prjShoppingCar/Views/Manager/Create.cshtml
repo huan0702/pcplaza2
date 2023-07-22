@@ -1,0 +1,126 @@
+﻿@model prjShoppingCar.Models.tProduct
+
+
+
+@{
+    ViewBag.Title = "產品上架";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+</head>
+<body>
+
+
+    <h2>產品上架</h2>
+
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+    }
+    <form action="@Url.Action("Create")" method="post" enctype="multipart/form-data">
+        <div class="form-horizontal">
+
+            <h4>新增產品</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.fPId, "*產品編號", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.fPId, new { htmlAttributes = new { @required = "required", @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.fPId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.fName, "*名稱", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.fName, new { htmlAttributes = new { @required = "required", @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.fName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.fintroduce, "簡介", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.fintroduce, new { Style = "width: 100%", htmlAttributes = new { @class = "form-control w-50" } })
+                    @Html.ValidationMessageFor(model => model.fintroduce, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.fPrice, "*價格", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.fPrice, new { htmlAttributes = new { @required = "required", @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.fPrice, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.fType, "*類別", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <select id="fType" name="fType" class="form-control">
+                        <option value=LapTop>筆電</option>
+                        <option value=PC>主機</option>
+                        <option value="Display Card" ">顯示卡</option>
+                        <option value=Monitor>螢幕</option>
+                        <option value=RAM>記憶體</option>
+                        <option value=Headphones>耳機</option>
+                        <option value=SSD>固態硬碟</option>
+                        <option value=Chassis>機殼</option>
+                        <option value=Others>其他</option>
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.fImg, "*圖片", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <input type="file" name="productImg" id="productImg" accept=".jpg, .png" required="required" />
+                    <span id="fImg-error" class="text-danger"></span>
+
+                </div>
+                <img id="preview" style="max-height:200px;" />
+
+                <script>
+                    $('#productImg').on('change', function (e) {
+                        const file = this.files[0];
+                        const objectURL = URL.createObjectURL(file);
+                        $('#preview').attr('src', objectURL);
+                    });
+                </script>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input id="submit" type="submit" value="新增" class="btn btn-success" />
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+    <div>
+        @Html.ActionLink("返回產品列表", "ProductManage")
+    </div>
+
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script>
+        $("#submit").click(() => {
+            if ($("#productImg")[0].files.length < 1) {
+                $("#fImg-error").text("This field is required.");
+                return;
+            }
+        })
+    </script>
+</body>
+
+
+</html>
+
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>

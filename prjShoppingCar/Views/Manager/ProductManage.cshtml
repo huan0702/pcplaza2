@@ -1,0 +1,204 @@
+﻿@using PagedList
+@using PagedList.Mvc
+
+@model IPagedList<prjShoppingCar.Models.tProduct>
+
+
+@{
+    ViewBag.Title = "產品管理";
+    string typeTitle = "筆電";
+    switch (ViewBag.currentType)
+    {
+        case "Laptop":
+            typeTitle = "筆電";
+            break;
+        case "PC":
+            typeTitle = "主機";
+            break;
+        case "Display Card":
+            typeTitle = "顯示卡";
+            break;
+        case "Monitor":
+            typeTitle = "螢幕";
+            break;
+        case "RAM":
+            typeTitle = "記憶體";
+            break;
+        case "Headphones":
+            typeTitle = "耳機";
+            break;
+        case "SSD":
+            typeTitle = "固態硬碟";
+            break;
+        case "Chassis":
+            typeTitle = "機殼";
+            break;
+        case "Others":
+            typeTitle = "其他";
+            break;
+        default:
+            typeTitle = "所有商品";
+            break;
+    }
+
+    string orderTitle = "商品編號 ↑";
+    switch (ViewBag.currentOrder)
+    {
+        case "PId_up":
+            orderTitle = "商品編號 ↑";
+            break;
+        case "PId_down":
+            orderTitle = "商品編號 ↓";
+            break;
+        case "Sold_up":
+            orderTitle = "銷量 ↑";
+            break;
+        case "Sold_down":
+            orderTitle = "銷量 ↓";
+            break;
+        default:
+            orderTitle = "商品編號 ↑";
+            break;
+    }
+}
+
+<html>
+<head>
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-table.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <title>產品管理</title>
+</head>
+<body>
+    <h2>產品管理</h2>
+    <h4>編輯/刪除產品</h4>
+
+
+    @using (Html.BeginForm("ProductManage", "Manager", FormMethod.Get))
+    {
+        <div style="height: 3rem; margin: 2rem 0; display: flex; flex-direction: row; justify-content: left; align-items: center">
+            @Html.TextBox("SearchString", null, new { @class = "btn-info", @style = "height: 100%" })
+            <input type="submit" value="查詢" class="btn btn-success" style="height: 100%; margin: 1rem" />
+        </div>
+        <div>
+            @Html.ActionLink("返回所有產品列表", "Index")
+        </div>
+    }
+
+    <hr />
+    <div id="header_options" style="width: 100%; display: flex; flex-direction: row;">
+        <div class="dropdown" style="width: 10%;">
+            <button class="btn btn-secondary dropdown-toggle" style="width: 100%;" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @typeTitle
+            </button>
+            <div class="dropdown-menu" aria-labelledby="productTypeList">
+                <a class="dropdown-item" name="All" href='@Url.Action("ProductManage", "Manager", new { type = "ALL" }, null)'>所有商品</a>
+                <a class="dropdown-item" name="Laptop" href='@Url.Action("ProductManage", "Manager", new { type = "Laptop" }, null)'>筆電</a>
+                <a class="dropdown-item" name="PC" href='@Url.Action("ProductManage", "Manager", new { type = "PC" }, null)'>主機</a>
+                <a class="dropdown-item" name="Display Card" href='@Url.Action("ProductManage", "Manager", new { type = "Display Card" }, null)'>顯示卡</a>
+                <a class="dropdown-item" name="Monitor" href='@Url.Action("ProductManage", "Manager", new { type = "Monitor" }, null)'>螢幕</a>
+                <a class="dropdown-item" name="RAM" href='@Url.Action("ProductManage", "Manager", new { type = "RAM" }, null)'>記憶體</a>
+                <a class="dropdown-item" name="Headphones" href='@Url.Action("ProductManage", "Manager", new { type = "Headphones" }, null)'>耳機</a>
+                <a class="dropdown-item" name="SSD" href='@Url.Action("ProductManage", "Manager", new { type = "SSD" }, null)'>固態硬碟</a>
+                <a class="dropdown-item" name="Chassis" href='@Url.Action("ProductManage", "Manager", new { type = "Chassis" }, null)'>機殼</a>
+                <a class="dropdown-item" name="Others" href='@Url.Action("ProductManage", "Manager", new { type = "Others" }, null)'>其他</a>
+
+            </div>
+            <input type="hidden" name="dropdownValue" id="dropdownValue" value="">
+        </div>
+
+        <div class="dropdown" style="width:10%; margin-left: 12px;">
+            <button class="btn btn-secondary dropdown-toggle" style="width:100%;" " type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @orderTitle
+            </button>
+            <div class="dropdown-menu" aria-labelledby="orderTypeList">
+                <a class="dropdown-item" name="PId_up" href='@Url.Action("ProductManage", "Manager", new { type = ViewBag.currentType, order="PId_up" }, null)'>商品編號↑</a>
+                <a class="dropdown-item" name="PId_down" href='@Url.Action("ProductManage", "Manager", new { type = ViewBag.currentType, order="PId_down" }, null)'>商品編號↓</a>
+                <a class="dropdown-item" name="Sold_up" href='@Url.Action("ProductManage", "Manager", new { type = ViewBag.currentType, order="Sold_up" }, null)'>銷量↑</a>
+                <a class="dropdown-item" name="Sold_down" href='@Url.Action("ProductManage", "Manager", new { type = ViewBag.currentType, order="Sold_down" }, null)'>銷量↓</a>
+            </div>
+            <input type="hidden" name="dropdownValue" id="dropdownValue" value="">
+        </div>
+
+    </div>
+    <input type="hidden" id="Message" value="@ViewBag.Message">
+    <table class="table" id="Product-Manage-Table">
+        <tr>
+            <th style="width:10%">
+                產品編號
+            </th>
+            <th style="width:20%">
+                產品名稱
+            </th>
+            <th style="width:37%">
+                簡介
+            </th>
+            <th style="width:10%">
+                價格
+            </th>
+            <th style="width:10%">
+                類別
+            </th>
+            <th style="width:10%">
+                銷量
+            </th>
+            <th style="width:12%">
+                操作
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="vertical-align: middle;">
+                    @item.fPId
+                </td>
+                <td style="vertical-align: middle;">
+                    @item.fName
+                </td>
+                <td style="vertical-align: middle;">
+                    @item.fintroduce
+                </td>
+                <td style="vertical-align: middle;">
+                    @item.fPrice
+                </td>
+                <td style="vertical-align: middle;">
+                    @item.fType
+                </td>
+                <td style="vertical-align: middle;">
+                    @item.fSoldCount
+                </td>
+                <td style="vertical-align: middle;">
+                    <a href='@Url.Action("Edit", "Manager", new { id = item.fId, type = ViewBag.currentType }, null)' class="btn btn-info">編輯</a>
+                    <a href='@Url.Action("Delete", "Manager", new { id = item.fId, type = ViewBag.currentType }, null)' class="btn btn-danger"
+                       onclick="return confirm('確定要刪除此產品嗎？')">刪除</a>
+                </td>
+            </tr>
+        }
+    </table>
+
+    @if (ViewBag.currentCount > 10)
+    {
+        @Html.PagedListPager(Model, page => Url.Action("ProductManage", new { page, CurrentFilter = ViewBag.CurrentFilter, type = ViewBag.currentType, order = ViewBag.currentOrder }))
+    }
+    <script src="/Scripts/jquery-3.4.1.min.js"></script>
+    <script>
+        if ($("#Message").val()) alert($("#Message").val());
+
+        $(document).ready(function () {
+            $('.dropdown-item').click(function () {
+                //var value = $(this).html();
+                //$('#dropdownValue').val(value);
+                //$('.dropdown-toggle').html(value);
+            });
+
+        });
+    </script>
+</body>
+</html>
+

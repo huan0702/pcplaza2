@@ -1,0 +1,101 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model IPagedList<prjShoppingCar.Models.tProduct>
+
+
+@{
+    ViewBag.Title = "產品列表";
+    string typeTitle = "筆電";
+    switch (ViewBag.currentType)
+    {
+        case "Laptop":
+            typeTitle = "筆電";
+            break;
+        case "PC":
+            typeTitle = "主機";
+            break;
+        case "Display Card":
+            typeTitle = "顯示卡";
+            break;
+        case "Monitor":
+            typeTitle = "螢幕";
+            break;
+        case "RAM":
+            typeTitle = "記憶體";
+            break;
+        case "Headphones":
+            typeTitle = "耳機";
+            break;
+        case "SSD":
+            typeTitle = "固態硬碟";
+            break;
+        case "Chassis":
+            typeTitle = "機殼";
+            break;
+        case "Others":
+            typeTitle = "其他";
+            break;
+        default:
+            typeTitle = "所有商品";
+            break;
+    }
+}
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+
+<div class="row" style="margin-top:20px;">
+
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+    {
+
+        <span>關鍵字:@Html.TextBox("SearchString", null, new { @class = "btn-info", @style = "height: 100%" })</span>
+        <span>最高價:@Html.TextBox("HighestPrice", null, new { @class = "btn-info", @style = "height: 100%" })</span>
+        <span>最低價:@Html.TextBox("LowestPrice", null, new { @class = "btn-info", @style = "height: 100%" })</span>
+        <input type="submit" value="查詢" class="btn btn-success" style="height: 100%; margin: 1rem" />
+
+    }
+   
+
+
+        <div>
+            <div style="color: red">
+                @ViewBag.Message1
+            </div>
+        </div>
+
+
+
+        <div>
+            @Html.ActionLink("返回所有產品列表", "Index")
+        </div>
+    
+    <h1>分類：@typeTitle</h1>
+    @if (Model.Count <= 0)
+    {
+        <h3 class="col-md-4">
+            本次搜尋沒有結果。
+        </h3>
+    }
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4" style="width: 33.3%; height: 20%;">
+            <div class="thumbnail">
+                <img src="~/images/@item.fImg" style="width:250px;height:250px;">
+                <div class="caption" style="display: flex; flex-direction: column; height: 300px; max-height: 350px">
+                    <h4 style="font-weight:bold">@item.fName</h4>
+                    <p>單價：@item.fPrice &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp; 銷售量：@item.fSoldCount</p>
+                    <p>簡介：</p>
+                    <p style="height: 80%; max-height: 80%; overflow-y: auto;">@item.fintroduce</p>
+                    <a href="@Url.Action("AddCar", "Member")?fPId=@item.fPId" class="btn btn-primary">加入購物車</a>
+                </div>
+            </div>
+        </div>
+    }
+
+
+
+</div>
+        @if (ViewBag.currentCount > 6)
+        {
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page, CurrentFilter = ViewBag.CurrentFilter, HpriceFilter = ViewBag.HpriceFilter, LpriceFilter = ViewBag.LpriceFilter, type = ViewBag.currentType }))
+        }
+

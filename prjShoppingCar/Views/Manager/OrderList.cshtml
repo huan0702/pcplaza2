@@ -1,0 +1,65 @@
+﻿@using PagedList
+@using PagedList.Mvc
+
+@model IPagedList<prjShoppingCar.Models.tOrder>
+
+@{
+    ViewBag.Title = "會員訂單列表";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<h2>會員訂單列表</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            訂單編號
+        </th>
+        <th>
+            會員編號
+        </th>
+        <th>
+            收件人
+        </th>
+        <th>
+            信箱
+        </th>
+        <th>
+            地址
+        </th>
+        <th>
+            日期
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.fOrderGuid
+            </td>
+            <td>
+                @item.fUserId
+            </td>
+            <td>
+                @item.fReceiver
+            </td>
+            <td>
+                @item.fEmail
+            </td>
+            <td>
+                @item.fAddress
+            </td>
+            <td>
+                @item.fDate
+            </td>
+            <td>
+                <a href="@Url.Action("OrderDetail")?fOrderGuid=@item.fOrderGuid"
+                   class="btn btn-info">訂單明細</a>
+            </td>
+        </tr>
+    }
+</table>
+@*管理員能看到的太多了~所以改成分頁顯示*@
+@Html.PagedListPager(Model, page => Url.Action("OrderList", new { page }))

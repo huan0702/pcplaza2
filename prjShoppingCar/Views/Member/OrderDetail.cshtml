@@ -1,0 +1,114 @@
+﻿@model IEnumerable<prjShoppingCar.Models.tOrderDetail>
+
+@{
+    ViewBag.Title = "訂單明細";
+    Layout = "~/Views/Shared/_LayoutMember.cshtml";
+}
+
+@functions{
+    public string getShippingString()
+    {
+        switch (ViewBag.shipping)
+        {
+            case "direct":
+                return "宅配";
+            case "inStore_711":
+                return "7-11超商取件";
+            default:
+                return "無";
+        }
+    }
+
+    public string getPaymentString()
+    {
+        switch (ViewBag.payment)
+        {
+            case "COD":
+                return "貨到付款";
+            case "transfer":
+                return "轉帳";
+            case "creditCard":
+                return "信用卡";
+            default:
+                return "無";
+        }
+    }
+
+    public string getPickAddressString()
+    {
+        switch (ViewBag.shipping)
+        {
+            case "direct":
+                return ViewBag.pickAddress;
+            case "inStore_711":
+                return ViewBag.pickAddress;
+            default:
+                return ViewBag.pickAddress;
+        }
+    }
+}
+
+
+<h2>訂單明細</h2>
+<div style="width: 90%; margin:auto; display:flex; justify-content: end">
+    <div style="margin: 1rem; display: flex; flex-direction: row; align-items: center">
+        <div style="display: flex; flex-direction: row; align-items: center; font-size: 25px; font-weight: bold; margin-left: 1rem ">
+            <div>付款方式: </div>
+            <div style="margin-left: 1rem">@getPaymentString()</div>
+        </div>
+        <div style="display: flex; flex-direction: row; align-items: center; font-size: 25px; font-weight: bold; margin-left: 1rem ">
+            <div>寄送方式: </div>
+            <div style="margin-left: 1rem">@getShippingString()</div>
+        </div>
+        <div style="display: flex; flex-direction: row; align-items: center; font-size: 25px; font-weight: bold; margin-left: 1rem ">
+            <div>寄送地址: </div>
+            <div style="margin-left: 1rem">@getPickAddressString()</div>
+        </div>
+
+    </div>
+</div>
+<table class="table">
+    <tr>
+        <th>
+            訂單編號
+        </th>
+        <th>
+            會員編號
+        </th>
+        <th>
+            產品編號
+        </th>
+        <th>
+            產品名稱
+        </th>
+        <th>
+            價格
+        </th>
+        <th>
+            數量
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.fOrderGuid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fUserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fPId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fQty)
+            </td>
+        </tr>
+    }
+</table>
