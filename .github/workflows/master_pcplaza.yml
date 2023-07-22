@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'pcplaza'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2C0CC43CF73A4509A230B93AA708C795 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_02DCE5EC2BD34176BFFCBFE1E485FEA0 }}
           package: .
